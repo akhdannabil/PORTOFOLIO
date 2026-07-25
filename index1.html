@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AKHDAN KETCHEEEE — Web Developer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #0F1419;
+    --surface: #161B22;
+    --surface-hi: #1D242D;
+    --border: #262E38;
+    --text: #E6EDF3;
+    --muted: #8B98A5;
+    --amber: #F2B84B;
+    --mint: #6FCF97;
+    --coral: #E88C7D;
+    --blue: #6FA8DC;
+    --mono: 'JetBrains Mono', monospace;
+    --sans: 'Inter', sans-serif;
+    --maxw: 920px;
+  }
+
+  *{ box-sizing: border-box; margin:0; padding:0; }
+
+  html{ scroll-behavior: smooth; }
+
+  body{
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    line-height: 1.6;
+    background-image:
+      radial-gradient(circle at 15% 0%, rgba(242,184,75,0.06), transparent 40%),
+      radial-gradient(circle at 85% 20%, rgba(111,168,220,0.05), transparent 45%);
+  }
+
+  a{ color: inherit; }
+
+  ::selection{ background: rgba(242,184,75,0.3); color: var(--text); }
+
+  :focus-visible{
+    outline: 2px solid var(--amber);
+    outline-offset: 3px;
+    border-radius: 4px;
+  }
+
+  .wrap{ max-width: var(--maxw); margin: 0 auto; padding: 0 24px; }
+
+  /* ---------- NAV: editor tab bar ---------- */
+  .tabbar{
+    position: sticky; top:0; z-index: 50;
+    background: rgba(15,20,25,0.85);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--border);
+  }
+  .tabbar-inner{
+    max-width: var(--maxw); margin:0 auto;
+    display:flex; align-items:stretch;
+    overflow-x:auto;
+    scrollbar-width: none;
+  }
+  .tabbar-inner::-webkit-scrollbar{ display:none; }
+  .tab{
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--muted);
+    background: transparent;
+    border:none;
+    border-right: 1px solid var(--border);
+    padding: 14px 20px;
+    cursor:pointer;
+    white-space:nowrap;
+    display:flex; align-items:center; gap:8px;
+    position:relative;
+    transition: color .15s ease, background .15s ease;
+  }
+  .tab .dot{ width:7px; height:7px; border-radius:50%; flex-shrink:0; }
+  .tab[data-lang="about"] .dot{ background: var(--blue); }
+  .tab[data-lang="skills"] .dot{ background: var(--mint); }
+  .tab[data-lang="projects"] .dot{ background: var(--amber); }
+  .tab[data-lang="experience"] .dot{ background: var(--coral); }
+  .tab[data-lang="contact"] .dot{ background: var(--muted); }
+  .tab:hover{ color: var(--text); background: var(--surface); }
+  .tab.active{ color: var(--text); background: var(--surface); }
+  .tab.active::after{
+    content:""; position:absolute; left:0; right:0; bottom:-1px; height:2px;
+    background: var(--amber);
+  }
+  .tab .close{ opacity:.4; font-size:11px; }
+
+  section{ padding: 96px 0; border-bottom: 1px solid var(--border); }
+  section:last-of-type{ border-bottom:none; }
+
+  .eyebrow{
+    font-family: var(--mono); font-size: 12px; color: var(--muted);
+    display:flex; align-items:center; gap:8px; margin-bottom: 18px;
+  }
+  .eyebrow::before{ content:"//"; color: var(--amber); }
+
+  h2.title{
+    font-family: var(--mono); font-weight:600; font-size: clamp(22px,3vw,28px);
+    color: var(--text); margin-bottom: 36px;
+  }
+  h2.title .dim{ color: var(--muted); font-weight:400; }
+
+  /* ---------- HERO ---------- */
+  .hero{ padding-top: 110px; padding-bottom: 90px; }
+  .hero-grid{
+    display:grid; grid-template-columns: 1.15fr 0.85fr; gap: 56px; align-items:center;
+  }
+  .code-card{
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow:hidden;
+    box-shadow: 0 20px 60px -20px rgba(0,0,0,0.6);
+  }
+  .code-card .filebar{
+    display:flex; align-items:center; gap:8px;
+    padding: 10px 14px;
+    background: var(--surface-hi);
+    border-bottom: 1px solid var(--border);
+    font-family: var(--mono); font-size: 12px; color: var(--muted);
+  }
+  .code-card .filebar .dots{ display:flex; gap:6px; margin-right:8px; }
+  .code-card .filebar .dots span{ width:10px; height:10px; border-radius:50%; }
+  .code-card .filebar .dots span:nth-child(1){ background:#E88C7D; }
+  .code-card .filebar .dots span:nth-child(2){ background:#F2B84B; }
+  .code-card .filebar .dots span:nth-child(3){ background:#6FCF97; }
+  .code-card pre{
+    font-family: var(--mono);
+    font-size: clamp(13px, 1.8vw, 16px);
+    padding: 28px 24px;
+    overflow-x:auto;
+    line-height: 1.9;
+  }
+  .tok-key{ color: var(--blue); }
+  .tok-str{ color: var(--mint); }
+  .tok-punc{ color: var(--muted); }
+  .tok-const{ color: var(--coral); }
+  .tok-kw{ color: var(--amber); }
+  .cursor{
+    display:inline-block; width:8px; height:1.1em; background: var(--amber);
+    vertical-align: text-bottom; margin-left:2px;
+    animation: blink 1s steps(1) infinite;
+  }
+  @media (prefers-reduced-motion: reduce){ .cursor{ animation:none; } }
+  @keyframes blink{ 50%{ opacity:0; } }
+
+  .hero-side{ display:flex; flex-direction:column; gap:22px; }
+  .hero-side p{ color: var(--muted); font-size: 15px; }
+  .hero-actions{ display:flex; flex-wrap:wrap; gap:12px; }
+  .btn{
+    font-family: var(--mono); font-size: 13px;
+    padding: 12px 18px; border-radius: 7px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    cursor:pointer; text-decoration:none;
+    display:inline-flex; align-items:center; gap:8px;
+    transition: transform .15s ease, border-color .15s ease, background .15s ease;
+  }
+  .btn:hover{ border-color: var(--amber); transform: translateY(-1px); }
+  .btn.primary{ background: var(--amber); color:#14100a; border-color:var(--amber); font-weight:600; }
+  .btn.primary:hover{ background:#f7c667; }
+  .btn::before{ content:"$"; color: var(--muted); }
+  .btn.primary::before{ color:#4d3a15; }
+
+  .stat-row{ display:flex; gap:28px; padding-top:6px; flex-wrap:wrap; }
+  .stat{ font-family: var(--mono); }
+  .stat b{ display:block; font-size:20px; color: var(--text); }
+  .stat span{ font-size:12px; color: var(--muted); }
+
+  /* ---------- ABOUT (README card) ---------- */
+  .readme{
+    background: var(--surface); border:1px solid var(--border); border-radius:10px;
+    padding: 32px;
+  }
+  .readme h3{ font-family: var(--mono); font-size:15px; color: var(--amber); margin-bottom:14px; }
+  .readme p{ color: var(--muted); margin-bottom: 18px; max-width: 62ch; }
+  .checklist{ list-style:none; display:grid; gap:10px; margin-top:18px; }
+  .checklist li{ font-size:14px; color: var(--text); display:flex; gap:10px; align-items:flex-start; }
+  .checklist li::before{ content:"✓"; color: var(--mint); font-family: var(--mono); flex-shrink:0; }
+
+  /* ---------- SKILLS (diff style) ---------- */
+  .diff-grid{ display:grid; grid-template-columns: repeat(auto-fit,minmax(240px,1fr)); gap:20px; }
+  .diff-block{ background: var(--surface); border:1px solid var(--border); border-radius:10px; overflow:hidden; }
+  .diff-block .diff-head{
+    font-family: var(--mono); font-size:12px; color: var(--muted);
+    padding:12px 16px; border-bottom:1px solid var(--border); background: var(--surface-hi);
+  }
+  .diff-block ul{ list-style:none; }
+  .diff-block li{
+    font-family: var(--mono); font-size:13.5px; padding: 9px 16px;
+    border-left: 3px solid transparent;
+  }
+  .diff-block li.add{ color: var(--mint); background: rgba(111,207,151,0.06); border-left-color: var(--mint); }
+  .diff-block li.add::before{ content:"+ "; opacity:.8; }
+
+  /* ---------- PROJECTS (repo cards) ---------- */
+  .project-grid{ display:grid; grid-template-columns: repeat(auto-fit,minmax(280px,1fr)); gap:20px; }
+  .repo-card{
+    background: var(--surface); border:1px solid var(--border); border-radius:10px;
+    padding:22px; display:flex; flex-direction:column; gap:12px;
+    transition: border-color .15s ease, transform .15s ease;
+  }
+  .repo-card:hover{ border-color: var(--amber); transform: translateY(-3px); }
+  .repo-top{ display:flex; align-items:center; justify-content:space-between; }
+  .repo-name{ font-family: var(--mono); font-weight:600; font-size:15px; color: var(--text); }
+  .lang{ display:flex; align-items:center; gap:6px; font-size:12px; color: var(--muted); font-family: var(--mono); }
+  .lang .ld{ width:8px; height:8px; border-radius:50%; background: var(--blue); }
+  .repo-desc{ color: var(--muted); font-size:13.5px; flex-grow:1; }
+  .tags{ display:flex; flex-wrap:wrap; gap:6px; }
+  .tag{
+    font-family: var(--mono); font-size:11px; color: var(--amber);
+    background: rgba(242,184,75,0.1); border:1px solid rgba(242,184,75,0.25);
+    padding:3px 8px; border-radius:5px;
+  }
+  .repo-foot{ display:flex; justify-content:space-between; align-items:center; padding-top:6px; border-top:1px solid var(--border); font-size:12px; color: var(--muted); font-family: var(--mono); }
+  .repo-links{ display:flex; gap:14px; }
+  .repo-links a{ text-decoration:none; color: var(--blue); }
+  .repo-links a:hover{ text-decoration:underline; }
+
+  /* ---------- EXPERIENCE (changelog) ---------- */
+  .changelog{ display:flex; flex-direction:column; gap:0; }
+  .entry{ display:grid; grid-template-columns: 130px 1fr; gap:24px; padding: 26px 0; border-top:1px solid var(--border); }
+  .entry:first-child{ border-top:none; }
+  .version{ font-family: var(--mono); }
+  .version .v{ color: var(--amber); font-weight:700; font-size:15px; }
+  .version .date{ display:block; color: var(--muted); font-size:12px; margin-top:6px; }
+  .entry-role{ font-weight:600; font-size:15.5px; margin-bottom:4px; }
+  .entry-org{ color: var(--muted); font-size:13.5px; margin-bottom:12px; }
+  .entry ul{ list-style:none; display:grid; gap:8px; }
+  .entry li{ font-size:14px; color: var(--text); padding-left:18px; position:relative; }
+  .entry li .badge{
+    position:absolute; left:0; top:2px; font-family: var(--mono); font-size:10px; font-weight:700;
+  }
+  .entry li.added .badge{ color: var(--mint); }
+  .entry li.fixed .badge{ color: var(--coral); }
+  .entry li.improved .badge{ color: var(--blue); }
+
+  /* ---------- CONTACT (terminal) ---------- */
+  .terminal{
+    background: var(--surface); border:1px solid var(--border); border-radius:10px; overflow:hidden;
+    max-width: 640px;
+  }
+  .terminal .filebar{ display:flex; align-items:center; gap:8px; padding:10px 14px; background: var(--surface-hi); border-bottom:1px solid var(--border); }
+  .terminal .filebar .dots span{ width:10px; height:10px; border-radius:50%; display:inline-block; margin-right:6px; }
+  .terminal .filebar .dots span:nth-child(1){ background:#E88C7D; }
+  .terminal .filebar .dots span:nth-child(2){ background:#F2B84B; }
+  .terminal .filebar .dots span:nth-child(3){ background:#6FCF97; }
+  .terminal .filebar .label{ font-family: var(--mono); font-size:12px; color: var(--muted); margin-left:6px; }
+  .terminal-body{ padding: 24px; font-family: var(--mono); font-size: 14px; }
+  .terminal-body .line{ margin-bottom:12px; display:flex; gap:10px; flex-wrap:wrap; align-items:center; }
+  .terminal-body .prompt{ color: var(--mint); }
+  .terminal-body .cmd{ color: var(--text); }
+  .terminal-body .out{ color: var(--muted); padding-left:20px; }
+  .copy-btn{
+    font-family: var(--mono); font-size:11px; color: var(--amber);
+    background: rgba(242,184,75,0.1); border:1px solid rgba(242,184,75,0.3);
+    padding: 3px 9px; border-radius:5px; cursor:pointer;
+  }
+  .copy-btn:hover{ background: rgba(242,184,75,0.2); }
+  .social-row{ display:flex; gap:16px; margin-top:22px; }
+  .social-row a{ color: var(--muted); display:flex; align-items:center; justify-content:center; width:38px; height:38px; border:1px solid var(--border); border-radius:8px; transition: border-color .15s ease, color .15s ease; }
+  .social-row a:hover{ border-color: var(--amber); color: var(--amber); }
+
+  footer{ padding: 32px 0 50px; text-align:center; font-family: var(--mono); font-size:12px; color: var(--muted); }
+
+  @media (max-width: 760px){
+    .hero-grid{ grid-template-columns: 1fr; }
+    .hero{ padding-top: 90px; }
+    section{ padding: 64px 0; }
+    .entry{ grid-template-columns: 1fr; gap:8px; }
+  }
+</style>
+</head>
+<body>
+
+<nav class="tabbar">
+  <div class="tabbar-inner">
+    <button class="tab active" data-lang="about" onclick="jump('about')"><span class="dot"></span>about.js</button>
+    <button class="tab" data-lang="skills" onclick="jump('skills')"><span class="dot"></span>skills.json</button>
+    <button class="tab" data-lang="projects" onclick="jump('projects')"><span class="dot"></span>projects.js</button>
+    <button class="tab" data-lang="experience" onclick="jump('experience')"><span class="dot"></span>experience.log</button>
+    <button class="tab" data-lang="contact" onclick="jump('contact')"><span class="dot"></span>contact.sh</button>
+  </div>
+</nav>
+
+<header class="hero wrap">
+  <div class="hero-grid">
+    <div class="code-card">
+      <div class="filebar">
+        <div class="dots"><span></span><span></span><span></span></div>
+        developer.js
+      </div>
+      <pre><span class="tok-kw">const</span> <span class="tok-key">developer</span> <span class="tok-punc">=</span> <span class="tok-punc">{</span>
+  <span class="tok-key">name</span><span class="tok-punc">:</span> <span class="tok-str">"Rangga Saputra"</span><span class="tok-punc">,</span>
+  <span class="tok-key">role</span><span class="tok-punc">:</span> <span class="tok-str">"<span id="typedRole">Frontend Developer</span><span class="cursor"></span>"</span><span class="tok-punc">,</span>
+  <span class="tok-key">basedIn</span><span class="tok-punc">:</span> <span class="tok-str">"Bandung, Indonesia"</span><span class="tok-punc">,</span>
+  <span class="tok-key">yearsActive</span><span class="tok-punc">:</span> <span class="tok-const">4</span><span class="tok-punc">,</span>
+  <span class="tok-key">available</span><span class="tok-punc">:</span> <span class="tok-const">true</span>
+<span class="tok-punc">};</span></pre>
+    </div>
+    <div class="hero-side">
+      <p>Saya membangun antarmuka web yang cepat, rapi, dan enak dipakai — dari rancangan komponen sampai kode yang jalan di production. Fokus utama: React, performa, dan detail kecil yang sering dilewatkan orang lain.</p>
+      <div class="hero-actions">
+        <a class="btn primary" href="#projects" onclick="jump('projects');return false;">lihat_proyek</a>
+        <a class="btn" href="#contact" onclick="jump('contact');return false;">hubungi_saya</a>
+      </div>
+      <div class="stat-row">
+        <div class="stat"><b>24+</b><span>proyek selesai</span></div>
+        <div class="stat"><b>4</b><span>tahun pengalaman</span></div>
+        <div class="stat"><b>12</b><span>klien puas</span></div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<section id="about" class="wrap">
+  <div class="eyebrow">about.js — ringkasan singkat</div>
+  <h2 class="title">Tentang <span class="dim">saya</span></h2>
+  <div class="readme">
+    <h3># Halo, saya DAN SI KETCHEEEE</h3>
+    <p>Web developer yang senang mengubah desain jadi kode yang rapi dan mudah dirawat. Saya percaya pengalaman pengguna yang baik lahir dari detail: transisi yang halus, waktu muat yang cepat, dan struktur kode yang jelas untuk tim di masa depan.</p>
+    <p>Di luar coding, saya suka membaca dokumentasi teknis, mengulik tooling baru, dan sesekali menulis catatan teknis di blog pribadi.</p>
+    <ul class="checklist">
+      <li>Terbiasa bekerja dengan tim desain dan produk secara langsung</li>
+      <li>Fokus pada performa, aksesibilitas, dan kode yang bisa diuji</li>
+      <li>Terbuka untuk proyek freelance maupun kolaborasi jangka panjang</li>
+    </ul>
+  </div>
+</section>
+
+<section id="skills" class="wrap">
+  <div class="eyebrow">skills.json — teknologi yang dipakai</div>
+  <h2 class="title">Kemampuan <span class="dim">teknis</span></h2>
+  <div class="diff-grid">
+    <div class="diff-block">
+      <div class="diff-head">frontend</div>
+      <ul>
+        <li class="add">React &amp; Next.js</li>
+        <li class="add">JavaScript / TypeScript</li>
+        <li class="add">HTML5 &amp; CSS3 / Tailwind</li>
+        <li class="add">Animasi &amp; interaksi UI</li>
+      </ul>
+    </div>
+    <div class="diff-block">
+      <div class="diff-head">backend &amp; tools</div>
+      <ul>
+        <li class="add">Node.js &amp; Express</li>
+        <li class="add">REST API &amp; integrasi pihak ketiga</li>
+        <li class="add">Git &amp; alur kerja tim</li>
+        <li class="add">Docker (dasar)</li>
+      </ul>
+    </div>
+    <div class="diff-block">
+      <div class="diff-head">lainnya</div>
+      <ul>
+        <li class="add">Desain UI dasar (Figma)</li>
+        <li class="add">Optimasi performa web</li>
+        <li class="add">Testing (Jest, Playwright)</li>
+        <li class="add">Deployment (Vercel, Netlify)</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section id="projects" class="wrap">
+  <div class="eyebrow">projects.js — hasil kerja terpilih</div>
+  <h2 class="title">Proyek <span class="dim">pilihan</span></h2>
+  <div class="project-grid">
+
+    <div class="repo-card">
+      <div class="repo-top">
+        <span class="repo-name">toko-nusantara</span>
+        <span class="lang"><span class="ld" style="background:#F2B84B"></span>React</span>
+      </div>
+      <p class="repo-desc">Platform e-commerce untuk UMKM lokal dengan katalog produk, keranjang, dan dashboard penjual.</p>
+      <div class="tags"><span class="tag">React</span><span class="tag">Node.js</span><span class="tag">Stripe</span></div>
+      <div class="repo-foot">
+        <span>diperbarui 2 minggu lalu</span>
+        <div class="repo-links"><a href="#">Live</a><a href="#">Kode</a></div>
+      </div>
+    </div>
+
+    <div class="repo-card">
+      <div class="repo-top">
+        <span class="repo-name">catatan-harian</span>
+        <span class="lang"><span class="ld" style="background:#6FA8DC"></span>Next.js</span>
+      </div>
+      <p class="repo-desc">Aplikasi jurnal pribadi dengan mode offline dan sinkronisasi otomatis ke cloud.</p>
+      <div class="tags"><span class="tag">Next.js</span><span class="tag">PWA</span><span class="tag">Supabase</span></div>
+      <div class="repo-foot">
+        <span>diperbarui 1 bulan lalu</span>
+        <div class="repo-links"><a href="#">Live</a><a href="#">Kode</a></div>
+      </div>
+    </div>
+
+    <div class="repo-card">
+      <div class="repo-top">
+        <span class="repo-name">dashboard-analitik</span>
+        <span class="lang"><span class="ld" style="background:#6FCF97"></span>TypeScript</span>
+      </div>
+      <p class="repo-desc">Dashboard visualisasi data penjualan real-time dengan grafik interaktif dan filter kustom.</p>
+      <div class="tags"><span class="tag">TypeScript</span><span class="tag">D3.js</span><span class="tag">WebSocket</span></div>
+      <div class="repo-foot">
+        <span>diperbarui 3 bulan lalu</span>
+        <div class="repo-links"><a href="#">Live</a><a href="#">Kode</a></div>
+      </div>
+    </div>
+
+    <div class="repo-card">
+      <div class="repo-top">
+        <span class="repo-name">resep-cepat</span>
+        <span class="lang"><span class="ld" style="background:#E88C7D"></span>React Native</span>
+      </div>
+      <p class="repo-desc">Aplikasi mobile pencari resep masakan berdasarkan bahan yang tersedia di kulkas.</p>
+      <div class="tags"><span class="tag">React Native</span><span class="tag">API</span></div>
+      <div class="repo-foot">
+        <span>diperbarui 5 bulan lalu</span>
+        <div class="repo-links"><a href="#">Live</a><a href="#">Kode</a></div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<section id="experience" class="wrap">
+  <div class="eyebrow">experience.log — riwayat perjalanan karier</div>
+  <h2 class="title">Pengalaman <span class="dim">kerja</span></h2>
+  <div class="changelog">
+
+    <div class="entry">
+      <div class="version"><span class="v">v3.0.0</span><span class="date">2024 — sekarang</span></div>
+      <div>
+        <div class="entry-role">Frontend Developer</div>
+        <div class="entry-org">PT Teknologi Nusantara</div>
+        <ul>
+          <li class="added"><span class="badge">ADDED</span> Membangun ulang dashboard internal, mempercepat waktu muat 40%</li>
+          <li class="improved"><span class="badge">IMPROVED</span> Menstandarkan komponen UI lintas 5 tim produk</li>
+          <li class="fixed"><span class="badge">FIXED</span> Menangani bug performa pada halaman dengan data besar</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="entry">
+      <div class="version"><span class="v">v2.0.0</span><span class="date">2022 — 2024</span></div>
+      <div>
+        <div class="entry-role">Junior Web Developer</div>
+        <div class="entry-org">Startup Kreatif Studio</div>
+        <ul>
+          <li class="added"><span class="badge">ADDED</span> Mengembangkan 8 landing page kampanye untuk klien</li>
+          <li class="improved"><span class="badge">IMPROVED</span> Migrasi dari jQuery ke React di 3 proyek utama</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="entry">
+      <div class="version"><span class="v">v1.0.0</span><span class="date">2021 — 2022</span></div>
+      <div>
+        <div class="entry-role">Magang Web Development</div>
+        <div class="entry-org">Agensi Digital Kreanova</div>
+        <ul>
+          <li class="added"><span class="badge">ADDED</span> Rilis pertama: website company profile untuk 4 klien</li>
+        </ul>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<section id="contact" class="wrap">
+  <div class="eyebrow">contact.sh — mari terhubung</div>
+  <h2 class="title">Ayo <span class="dim">ngobrol</span></h2>
+  <div class="terminal">
+    <div class="filebar">
+      <span class="dots"><span></span><span></span><span></span></span>
+      <span class="label">zsh — AKHDAN@portfolio</span>
+    </div>
+    <div class="terminal-body">
+      <div class="line"><span class="prompt">AKHDAN@portfolio</span><span class="cmd">$ cat contact.txt</span></div>
+      <div class="line out">email: AKHDAN.KETCHE@contoh.com <button class="copy-btn" onclick="copyEmail()">salin</button></div>
+      <div class="line out">lokasi: Bandung, Indonesia</div>
+      <div class="line out">status: terbuka untuk proyek baru</div>
+      <div class="line"><span class="prompt">AKHDAN@portfolio</span><span class="cmd">$ _</span></div>
+    </div>
+  </div>
+  <div class="social-row">
+    <a href="https://github.com/" aria-label="GitHub" title="GitHub">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 .5C5.65.5.5 5.65.5 12c0 5.08 3.29 9.39 7.86 10.91.57.1.78-.25.78-.55 0-.27-.01-1.16-.02-2.1-3.2.7-3.88-1.36-3.88-1.36-.52-1.33-1.28-1.69-1.28-1.69-1.04-.71.08-.7.08-.7 1.15.08 1.76 1.18 1.76 1.18 1.03 1.76 2.69 1.25 3.35.96.1-.75.4-1.25.73-1.54-2.56-.29-5.25-1.28-5.25-5.69 0-1.26.45-2.29 1.18-3.1-.12-.29-.51-1.46.11-3.05 0 0 .97-.31 3.18 1.18.92-.26 1.9-.38 2.88-.39.98 0 1.96.13 2.88.39 2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.23 2.76.12 3.05.73.81 1.18 1.84 1.18 3.1 0 4.42-2.69 5.4-5.26 5.68.42.36.78 1.08.78 2.18 0 1.57-.02 2.84-.02 3.23 0 .3.2.66.79.55A10.52 10.52 0 0 0 23.5 12C23.5 5.65 18.35.5 12 .5Z"/></svg>
+    </a>
+    <a href="https://linkedin.com/" aria-label="LinkedIn" title="LinkedIn">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M20.45 20.45h-3.55v-5.57c0-1.33-.02-3.03-1.85-3.03-1.85 0-2.14 1.45-2.14 2.94v5.66H9.36V9h3.41v1.56h.05c.47-.9 1.63-1.85 3.36-1.85 3.59 0 4.26 2.37 4.26 5.45v6.29ZM5.34 7.43a2.06 2.06 0 1 1 0-4.12 2.06 2.06 0 0 1 0 4.12ZM7.12 20.45H3.56V9h3.56v11.45Z"/></svg>
+    </a>
+    <a href="mailto:akhdan.ketche@contoh.com" aria-label="Email" title="Email">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M2 5.5A1.5 1.5 0 0 1 3.5 4h17A1.5 1.5 0 0 1 22 5.5v13a1.5 1.5 0 0 1-1.5 1.5h-17A1.5 1.5 0 0 1 2 18.5v-13Zm2.2.5 7.8 6.24L19.8 6H4.2ZM20 8.16l-7.4 5.92a1 1 0 0 1-1.2 0L4 8.16V18h16V8.16Z"/></svg>
+    </a>
+  </div>
+</section>
+
+<footer>// dibuat dengan Rasa ingin tahu, kopi, dan sedikit garis kode — © 2026 AKHDAN KETCHE</footer>
+
+<script>
+  // --- typing effect for role ---
+  const roles = ["Frontend Developer", "UI Engineer", "Pemecah Masalah", "Pembuat Antarmuka"];
+  const roleEl = document.getElementById('typedRole');
+  const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  if (!prefersReduced && roleEl) {
+    let roleIndex = 0, charIndex = roles[0].length, deleting = true;
+    function tick(){
+      const current = roles[roleIndex];
+      if (deleting) {
+        charIndex--;
+        roleEl.textContent = current.slice(0, charIndex);
+        if (charIndex === 0) { deleting = false; roleIndex = (roleIndex + 1) % roles.length; }
+      } else {
+        charIndex++;
+        roleEl.textContent = roles[roleIndex].slice(0, charIndex);
+        if (charIndex === roles[roleIndex].length) { deleting = true; setTimeout(tick, 1400); return; }
+      }
+      setTimeout(tick, deleting ? 45 : 70);
+    }
+    setTimeout(tick, 1400);
+  }
+
+  // --- tab nav: smooth scroll + active state ---
+  function jump(id){
+    document.getElementById(id).scrollIntoView({ behavior: prefersReduced ? 'auto' : 'smooth', block: 'start' });
+  }
+
+  const sections = document.querySelectorAll('section[id]');
+  const tabs = document.querySelectorAll('.tab');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        tabs.forEach(t => t.classList.toggle('active', t.dataset.lang === entry.target.id));
+      }
+    });
+  }, { rootMargin: '-40% 0px -50% 0px' });
+  sections.forEach(s => observer.observe(s));
+
+  // --- copy email ---
+  function copyEmail(){
+    navigator.clipboard.writeText('rangga.saputra@contoh.com').then(() => {
+      const btn = document.querySelector('.copy-btn');
+      const original = btn.textContent;
+      btn.textContent = 'tersalin!';
+      setTimeout(() => btn.textContent = original, 1500);
+    });
+  }
+</script>
+
+</body>
+</html> 
